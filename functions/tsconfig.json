@@ -5,6 +5,7 @@
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
+    "allowJs": false,
     "strict": true,
     "target": "es2017"
   },

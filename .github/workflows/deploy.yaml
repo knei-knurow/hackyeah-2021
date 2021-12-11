@@ -1,0 +1,29 @@
+name: Deploy to Cloud Functions
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm ci
+        working-directory: ./functions
+      - name: Build
+        run: npm run build
+        working-directory: ./functions
+      - name: Lint
+        run: npm run lint
+        working-directory: ./functions
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

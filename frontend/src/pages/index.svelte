@@ -5,7 +5,8 @@
     import TopBar from '../lib/TopBar.svelte';
     import Auth from "../lib/Auth.svelte";
     import { initializeApp } from 'firebase/app';
-    import type { UserCredential } from "firebase/auth";  
+    import { onAuthStateChanged, signOut } from 'firebase/auth';
+    import { User, GoogleAuthProvider, getAuth } from "firebase/auth";  
     import type { SectionName } from "src/lib/sections/Sections.svelte";
     import { SECTIONS } from "../lib/sections/Sections.svelte";
 
@@ -16,26 +17,30 @@
         storageBucket: "hackyeah-2021.appspot.com",
         messagingSenderId: "1082992813378",
         appId: "1:1082992813378:web:527cd7986a3212f4c394db"
-    };
+    };    
 
     initializeApp(firebaseConfig);
 
-    let userCredential: UserCredential = undefined;
+    let user: User = undefined;
     let isDrawerOpened = false
     let openedSection: SectionName = "Start"
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, newUser => newUser ? user = newUser : user = undefined);
 </script>
 
-{#if userCredential !== undefined}
+{#if user !== undefined}
     <Drawer bind:open={isDrawerOpened} bind:openedSection />
 
     <Scrim fixed />
     <AppContent>
-      <TopBar openDrawer={() => isDrawerOpened = true} {openedSection} />
+      <TopBar openDrawer={() => isDrawerOpened = true} signOut={() => signOut(auth)} {openedSection} />
     </AppContent>
 
     <svelte:component this={SECTIONS[openedSection].component} bind:openedSection/>
 {:else}
-    <Auth bind:userCredential />
+    <Auth {provider} {auth} />
 {/if}
 
 

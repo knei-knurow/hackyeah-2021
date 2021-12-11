@@ -14,7 +14,10 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     response.status(401).send("method is not POST")
     return
   }
+
+  functions.logger.info(typeof request.body)
   functions.logger.info(request.body)
+
   const {userUid, deviceId} = JSON.parse(request.body)
 
   if (!userUid || !deviceId) {
@@ -22,9 +25,18 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     return
   }
 
-
-  const fcmTokens: string[] = []
   try {
+    await firestore
+    .collection("users")
+    .doc(userUid)
+    .collection("logs")
+    .add({
+      deviceId,
+      timestamp: admin.firestore.FieldValue.serverTimestamp()
+    })
+
+    const fcmTokens: string[] = []
+
     const tokensSnapshot = await firestore
     .collection("users")
     .doc(userUid)
@@ -32,33 +44,25 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     .get()
 
     for (const doc of tokensSnapshot.docs) {
-    const token = doc.data().fcmToken
-    fcmTokens.push(token)
-  }
+      const token = doc.data().fcmToken
+      fcmTokens.push(token)
+    }
+
+    functions.logger.info(fcmTokens)
+
+    const payload: MessagingPayload = {
+      notification: {
+        title: "Twoim dzieckiem miota jak szatan!",
+        message: "Lepiej biegnij szybko i je sprawdź!",
+      },
+    }
+
+    const messagingResponse = await messaging.sendToDevice(fcmTokens, payload)
+    functions.logger.info(`Messaging response: ${messagingResponse}`)
+    response.send(
+      `Hello from Firebase! userUid: ${userUid}, deviceId: ${deviceId}`
+    )
   } catch (error) {   
     functions.logger.info(`error: ${error}`)
   }
-
-  // Get all fcmTokens of a particular user, so that they are notified on all
-  // devices
-  
-
-  functions.logger.info(fcmTokens)
-
-  const payload: MessagingPayload = {
-    notification: {
-      title: "Twoim dzieckiem miota jak szatan!",
-      message: "Lepiej biegnij szybko i je sprawdź!",
-    },
-  }
-
-  // Get ID
-  // firestore.collection("users").doc(userUid).collection("devices").doc()
-
-  // Send notification to all of the user's devices
-  const messagingResponse = await messaging.sendToDevice(fcmTokens, payload)
-  functions.logger.info(`Messaging response: ${messagingResponse}`)
-  response.send(
-    `Hello from Firebase! userUid: ${userUid}, deviceId: ${deviceId}`
-  )
 })

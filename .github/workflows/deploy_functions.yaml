@@ -1,4 +1,4 @@
-name: Deploy to Firebase
+name: Deploy to Cloud Functions
 
 on:
   push:
@@ -24,6 +24,6 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy
+          args: deploy --functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

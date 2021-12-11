@@ -25,19 +25,27 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     return
   }
 
-  const tokensSnapshot = await firestore
+
+  const fcmTokens: string[] = []
+  try {
+    const tokensSnapshot = await firestore
     .collection("users")
     .doc(userUid)
     .collection("fcmTokens")
     .get()
 
-  // Get all fcmTokens of a particular user, so that they are notified on all
-  // devices
-  const fcmTokens: string[] = []
-  for (const doc of tokensSnapshot.docs) {
+    for (const doc of tokensSnapshot.docs) {
     const token = doc.data().fcmToken
     fcmTokens.push(token)
   }
+  } catch (error) {   
+    functions.logger.info(error)
+  }
+
+  // Get all fcmTokens of a particular user, so that they are notified on all
+  // devices
+  
+  
 
   functions.logger.info(fcmTokens)
 

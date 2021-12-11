@@ -9,7 +9,7 @@
     <Row>
       <Section>
         <IconButton class="material-icons" on:click={openDrawer}>menu</IconButton>
-        <Title> HACK YEAH 21' </Title>
+        <Title> Start </Title>
       </Section>
       <Section align="end" toolbar>
         <IconButton class="material-icons" aria-label="Download">

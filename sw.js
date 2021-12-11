@@ -93,17 +93,20 @@ define(['./workbox-a51b997a'], (function (workbox) { 'use strict';
    */
 
   workbox.precacheAndRoute([{
-    "url": "assets/index.0765357b.js",
-    "revision": null
-  }, {
     "url": "assets/index.4336b040.css",
     "revision": null
   }, {
-    "url": "assets/vendor.3416c2bf.js",
+    "url": "assets/index.c716b0f3.js",
     "revision": null
   }, {
+    "url": "assets/vendor.cd8b9c71.js",
+    "revision": null
+  }, {
+    "url": "firebase-messaging-sw.js",
+    "revision": "b48b7625952acc1e944e58866df06d21"
+  }, {
     "url": "index.html",
-    "revision": "79cff93cb064d131c2fb69a20d00af6f"
+    "revision": "c07f151629e84520e90492a342a30424"
   }, {
     "url": "favicon.svg",
     "revision": "71dcfd191507c31dc79efe3341dfa3b9"

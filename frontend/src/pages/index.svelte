@@ -37,9 +37,7 @@
     if (user !== undefined) {
       const swRegistration = async () => {
         try {
-          await navigator.serviceWorker.register(
-            "mypath/firebase-messaging-sw.js"
-          )
+          await navigator.serviceWorker.register("./firebase-messaging-sw.js")
         } catch (error) {
           console.error(error)
         }

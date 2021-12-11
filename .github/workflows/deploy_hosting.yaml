@@ -21,7 +21,7 @@ jobs:
         run: yarn run build
         working-directory: ./frontend
       - name: Copy to public
-        run: rm -rf ./public && cp ./frontend/dist ./public
+        run: rm -rf ./public && cp -r ./frontend/dist ./public
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:

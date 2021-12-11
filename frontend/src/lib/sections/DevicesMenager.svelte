@@ -69,7 +69,7 @@
     <Icon class="material-icons">add</Icon>
   </Fab>
 
-  <DeviceAdder bind:open={isDeviceAdderOpened} {addDevice} />
+  <DeviceAdder bind:open={isDeviceAdderOpened} {addDevice} {user} />
 {/await}
 
 <style>

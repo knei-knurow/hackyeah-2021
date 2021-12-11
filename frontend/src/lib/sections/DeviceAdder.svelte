@@ -6,9 +6,11 @@
   import Select, { Option } from "@smui/select"
   import HelperText from "@smui/textfield/helper-text"
   import slug from "slug"
+  import type { User } from "firebase/auth"
 
   export let open: boolean
   export let addDevice: (dev: Device) => Promise<boolean>
+  export let user: User
 
   const defaultDevice: Device = {
     name: "",
@@ -71,7 +73,9 @@
       />
     {:else if step === 2}
       Paste this id on your device:
-      <h1 style="margin-top: 20px;"><strong> {deviceToAdd.id} </strong></h1>
+      <h1 style="margin-top: 20px;">
+        <strong> {user.uid}-{deviceToAdd.id} </strong>
+      </h1>
     {/if}
   </Content>
   <Actions>

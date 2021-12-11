@@ -36,17 +36,17 @@
     user = newUser ? newUser : undefined
     if (user !== undefined) {
       ;(async () => {
-        const token = await getToken(messaging, {
+        const fcmToken = await getToken(messaging, {
           serviceWorkerRegistration: await navigator.serviceWorker.register(
             "./firebase-messaging-sw.js"
           ),
           vapidKey:
             "BK-R4Cg4Z60s08wLw__xIRVpgtdZNpMD8yJeI9WZMtS9VbxjT1dmL07U6AU8Lp2lVtJsxhseq2lP6leE60pHGDU",
         })
-        if (token) {
-          console.log(token)
-          await setDoc(doc(db, "users", newUser.uid, "fcmTokens", token), {
-            token,
+        if (fcmToken) {
+          console.log(fcmToken)
+          await setDoc(doc(db, "users", newUser.uid, "fcmTokens", fcmToken), {
+            fcmToken,
           })
         } else {
           console.log(

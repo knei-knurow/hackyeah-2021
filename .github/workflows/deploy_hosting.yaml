@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -20,9 +20,8 @@ jobs:
       - name: Build
         run: yarn run build
         working-directory: ./frontend
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          args: deploy --only hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          branch: gh-pages
+          folder: ./frontend/dist

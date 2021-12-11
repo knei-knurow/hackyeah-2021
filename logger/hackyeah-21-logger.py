@@ -1,19 +1,20 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QCoreApplication, QTimer
+from PyQt5.QtCore import QCoreApplication, QTimer, QDir
 from PySide2 import QtWidgets, QtGui
 from pyjoycon import JoyCon, get_R_id, get_L_id, joycon
 from pyjoycon.device import get_ids_of_type
 from analyzer import Analyzer
 import numpy as np
 import sys
+import tkinter as tk
+from tkinter import simpledialog
+
 
 
 
 # Configuration
 ALGORITHM_EXECUTION_DELAY = 2 # Seconds
 MEASUREMENT_DELAY = 100 # Milliseconds
-
-
 
 class App(QtWidgets.QSystemTrayIcon):
     # Joycon
@@ -24,6 +25,7 @@ class App(QtWidgets.QSystemTrayIcon):
     action_connection_status = None
     action_connect_joycon_l = None
     action_connect_joycon_r = None
+    actions_connect_parent_code = None
 
     # Timer
     timer = QTimer()
@@ -32,6 +34,11 @@ class App(QtWidgets.QSystemTrayIcon):
     # Variables
     arr_accel = np.array([[0, 0, 0]])   
     isTrackingEnabled = False
+    device_code = None
+
+    #Tk
+    ROOT = tk.Tk()
+    ROOT.withdraw()
 
     analyzer = Analyzer("clf.obj")
 
@@ -46,13 +53,17 @@ class App(QtWidgets.QSystemTrayIcon):
         menu.addSection('Tracking')
         self.action_tracking_status = menu.addAction('Status: paused')
         self.action_connect_parent_device = menu.addAction('Connect to parent device')
+
         menu.addSection('Input devices')
         self.action_connection_status = menu.addAction('Disconnect')
-        self.action_connection_status.setEnabled(False)
         self.action_connect_joycon_r = menu.addAction('Connect to JoyCon (R)')
         self.action_connect_joycon_l = menu.addAction('Connect to JoyCon (L)')
         menu.addSeparator()
         action_quit = menu.addAction("Quit")
+
+        self.action_tracking_status.setVisible(False)
+        self.action_connection_status.setVisible(False)
+        self.action_tracking_status.setEnabled(False)
 
         # Connecting trigers to functions
         self.action_tracking_status.triggered.connect(self.change_tracking_state)
@@ -60,6 +71,7 @@ class App(QtWidgets.QSystemTrayIcon):
         self.action_connect_joycon_r.triggered.connect(self.connect_joycon_r)
         self.action_connect_joycon_l.triggered.connect(self.connect_joycon_l)
         action_quit.triggered.connect(QCoreApplication.instance().quit)
+        self.action_connect_parent_device.triggered.connect(self.parent_connection_dialog)
 
         # Set menu of system tray icon
         self.setContextMenu(menu)
@@ -74,9 +86,10 @@ class App(QtWidgets.QSystemTrayIcon):
             self.joycon_id = get_L_id()
         if not self.joycon_id == None:
             self.joycon = JoyCon(*self.joycon_id)
-            self.action_connection_status.setEnabled(True)
-            self.action_connect_joycon_r.setEnabled(False)
-            self.action_connect_joycon_l.setEnabled(False)
+            self.action_connection_status.setVisible(True)
+            self.action_connect_joycon_l.setVisible(False)
+            self.action_connect_joycon_r.setVisible(False)
+            self.action_tracking_status.setEnabled(True)
             self.timer.timeout.connect(self.main)
             self.timer.start()
 
@@ -89,9 +102,11 @@ class App(QtWidgets.QSystemTrayIcon):
     def disconnect_devices(self):
         self.joycon_id = None
         self.joycon = None
-        self.action_connection_status.setEnabled(False)
-        self.action_connect_joycon_r.setEnabled(True)
-        self.action_connect_joycon_l.setEnabled(True)
+        self.action_connection_status.setVisible(False)
+        self.action_connect_joycon_r.setVisible(True)
+        self.action_connect_joycon_l.setVisible(True)
+        self.action_tracking_status.setEnabled(False)
+        self.action_tracking_status.setText("Status: paused")
         self.timer.stop()
         self.isTrackingEnabled = False
 
@@ -102,6 +117,12 @@ class App(QtWidgets.QSystemTrayIcon):
         self.isTrackingEnabled = not self.isTrackingEnabled
         self.action_tracking_status.setText(f'Status: {"active" if self.isTrackingEnabled else "paused"}')
 
+    def parent_connection_dialog(self):
+        USER_INP = simpledialog.askstring(title="Enter device code", prompt="")
+        self.device_code = USER_INP
+        if not (USER_INP == None or len(USER_INP)==0):
+            self.action_connect_parent_device.setVisible(False)
+            self.action_tracking_status.setVisible(True)
 
 
     # Main loop (executing doodeks algorithm and sending request to server)
@@ -111,6 +132,7 @@ class App(QtWidgets.QSystemTrayIcon):
             self.arr_accel = np.append(self.arr_accel, [[raw_accel['x'], raw_accel['y'], raw_accel['z']]], axis=0)
             if len(self.arr_accel) >= ALGORITHM_EXECUTION_DELAY/(MEASUREMENT_DELAY/1000):
                 percentage, detailed = self.analyzer.analyze(self.arr_accel[1:])
+                # Tutaj można wysyłać requesty
                 self.arr_accel = np.array([[0,0,0]])
 
 

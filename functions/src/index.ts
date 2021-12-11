@@ -16,7 +16,7 @@ export const webhook = functions.https.onRequest(async (request, response) => {
   }
 
   functions.logger.info(typeof request.body)
-  functions.logger.info(request.body)
+  functions.logger.info(request)
 
   const [userUid, deviceId] = request.body.split(" ")
 

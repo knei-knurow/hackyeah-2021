@@ -16,7 +16,7 @@ export const webhook = functions.https.onRequest(async (request, response) => {
   }
 
   functions.logger.info(typeof request.body)
-  functions.logger.info(request)
+  functions.logger.info(JSON.stringify(request))
 
   const [userUid, deviceId] = request.body.split(" ")
 
@@ -54,6 +54,7 @@ export const webhook = functions.https.onRequest(async (request, response) => {
       notification: {
         title: "Twoim dzieckiem miota jak szatan!",
         message: "Lepiej biegnij szybko i je sprawdź!",
+        image: "https://i1.memy.pl/big/70cc7d_136942766037.jpg"
       },
     }
 

@@ -14,8 +14,7 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     response.status(401).send("method is not POST")
     return
   }
-  functions.logger.info(typeof request.body)
-  functions.logger.info(request.body)
+  
   const {userUid, deviceId} = JSON.parse(request.body)
 
   functions.logger.info(`userUid: ${userUid}`)
@@ -40,6 +39,8 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     fcmTokens.push(token)
   }
 
+  functions.logger.info(fcmTokens)
+
   const payload: MessagingPayload = {
     notification: {
       title: "Twoim dzieckiem miota jak szatan!",
@@ -48,7 +49,7 @@ export const webhook = functions.https.onRequest(async (request, response) => {
   }
 
   // Get ID
-  firestore.collection("users").doc(userUid).collection("devices").doc()
+  // firestore.collection("users").doc(userUid).collection("devices").doc()
 
   // Send notification to all of the user's devices
   const messagingResponse = await messaging.sendToDevice(fcmTokens, payload)

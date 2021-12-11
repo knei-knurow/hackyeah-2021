@@ -14,6 +14,16 @@
   }
 </script>
 
-<Button on:click={authenticate}>
-  <Label>Login</Label>
+<Button on:click={authenticate} class="auth-btn">
+  <h1>Login</h1>
 </Button>
+
+<style>
+  /* Center vertically and horizontally */
+  :global(.auth-btn) {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+  }
+</style>

@@ -14,11 +14,8 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     response.status(401).send("method is not POST")
     return
   }
-  
+  functions.logger.info(request.body)
   const {userUid, deviceId} = JSON.parse(request.body)
-
-  functions.logger.info(`userUid: ${userUid}`)
-  functions.logger.info(`deviceId: ${deviceId}`)
 
   if (!userUid || !deviceId) {
     response.status(401).send("userUid and/or deviceId are null")

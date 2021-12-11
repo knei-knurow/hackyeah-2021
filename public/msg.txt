@@ -1,0 +1,2 @@
+contents of this directory are replaced by frontend/dist during
+deploy on GitHub Actions

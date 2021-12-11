@@ -1,0 +1,30 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Install yarn
+        run: npm install -g yarn
+      - name: Install Dependencies
+        run: yarn install
+        working-directory: ./frontend
+      - name: Build
+        run: yarn run build
+        working-directory: ./frontend
+      - name: Copy to public
+        run: rm -rf ./public && cp ./frontend/dist ./public
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

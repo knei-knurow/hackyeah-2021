@@ -9,12 +9,12 @@ const messaging = app.messaging()
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const webhook = functions.https.onRequest(async (request, response) => {
+export const webhook = functions.https.onRequest((request, response) => {
   if (request.method !== "POST") {
     response.status(401).send("method is not POST")
     return
   }
-
+  functions.logger.info(request.body)
   const userUid = request.body.userUid
   const deviceId = request.body.deviceId
 

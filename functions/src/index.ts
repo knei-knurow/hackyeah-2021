@@ -14,9 +14,9 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     response.status(401).send("method is not POST")
     return
   }
+  functions.logger.info(typeof request.body)
   functions.logger.info(request.body)
-  const userUid = request.body.userUid
-  const deviceId = request.body.deviceId
+  const {userUid, deviceId} = JSON.parse(request.body)
 
   functions.logger.info(`userUid: ${userUid}`)
   functions.logger.info(`deviceId: ${deviceId}`)

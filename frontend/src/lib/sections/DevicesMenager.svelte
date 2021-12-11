@@ -1,59 +1,70 @@
 <script lang="ts">
     import Paper, { Title, Subtitle, Content,  } from '@smui/paper';
-    import { Device, DeviceType } from '../../FirebaseTypes';
+    import type { Device } from '../../FirebaseTypes';
     import Fab, { Icon } from '@smui/fab';
     import DeviceAdder from './DeviceAdder.svelte';
     import IconButton from '@smui/icon-button';
+    import { doc, setDoc, collection, getDocs, deleteDoc } from "firebase/firestore"; 
+    import type { Firestore } from "firebase/firestore"
+    import type { User } from 'firebase/auth';
+
+    export let db: Firestore
+    export let user: User
 
     let isDeviceAdderOpened = false;
-    let devices: Device[] = [
-        {
-            code: 'JoyCon',
-            name: "JoyCon",
-            type: DeviceType.Accelerometer,
-            description: ""
-        },
-        {
-            code: 'Laptop',
-            name: "Laptop",
-            type: DeviceType.Mouse,
-            description: "Laptop Łukasza",
-        }
-    ]
+    let devices: Device[] = []
 
-    function addDevice(device: Device) {
-        if(devices.some(d => d.code === device.code)) {
-            return false;
-        }
-
-        devices = [...devices, device]
-        return true;
+    async function getDevices() {
+        const snapshot = await getDocs(collection(db, "users", user.uid, "devices"))
+        devices =  snapshot.docs.map(doc => doc.data() as Device)
     }
 
-    function deleteDevice(code: string) {
-        return () => {
-            devices = devices.filter(d => d.code !== code)
-            devices = devices
+    async function addDevice(device: Device) {
+        try {
+            if(devices.some(d => d.id === device.id)) {
+                return false;
+            }
+
+            await setDoc(doc(db, "users", user.uid, "devices", device.id), device);
+
+            devices = [...devices, device]            
+            return true;
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    function deleteDevice(id: string) {
+        return async () => {
+            await deleteDoc(doc(db, "users", user.uid, "devices", id));
+            devices = devices.filter(d => d.id !== id)
         }
     }
 </script>
 
-<div style="margin: auto; width: calc(100vw - 100px);">
-    {#each devices as { name, description, type, code }}
-        <Paper style="margin: 20px;">
-            <IconButton class="material-icons delete-device-button" on:click={deleteDevice(code)}>delete</IconButton>
-            <Title>{name}</Title>
-            <Subtitle>Device type: {type}</Subtitle>
-            <Content>{description}</Content>
-        </Paper>
-    {/each}
-</div>
+{#await getDevices()}
+    Ładowanie
+{:then d} 
+    <div style="margin: auto; width: calc(100vw - 100px);">
+        {#each devices as { name, description, type, id }(id)}
+            <Paper style="margin: 20px;">
+                <IconButton class="material-icons delete-device-button" on:click={deleteDevice(id)}>delete</IconButton>
+                <Title>{name}</Title>
+                <Subtitle>Device type: {type}</Subtitle>
+                <Content>{description}</Content>
+            </Paper>
+        {/each}
+    </div>
 
-<Fab class="add-device-button" on:click={() => isDeviceAdderOpened = true}>
-    <Icon class="material-icons">add</Icon>
-</Fab>
+    <Fab class="add-device-button" on:click={() => isDeviceAdderOpened = true}>
+        <Icon class="material-icons">add</Icon>
+    </Fab>
 
-<DeviceAdder bind:open={isDeviceAdderOpened} {addDevice}/>
+    <DeviceAdder bind:open={isDeviceAdderOpened} {addDevice}/>
+{/await}
+
+
 
 <style>
     :global(.add-device-button) {

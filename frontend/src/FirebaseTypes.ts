@@ -4,7 +4,7 @@ export enum DeviceType {
 }
 
 export interface Device {
-    code: string
+    id: string
     name: string
     type: DeviceType
     description: string

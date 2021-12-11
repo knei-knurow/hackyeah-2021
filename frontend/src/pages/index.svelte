@@ -9,6 +9,7 @@
     import { User, GoogleAuthProvider, getAuth } from "firebase/auth";  
     import type { SectionName } from "src/lib/sections/Sections.svelte";
     import { SECTIONS } from "../lib/sections/Sections.svelte";
+    import { getFirestore } from "firebase/firestore"
 
     const firebaseConfig = {
         apiKey: "AIzaSyA7dfh7bUrK5BWKbTSfQpuOyHF62nW62JI",
@@ -26,6 +27,7 @@
     let openedSection: SectionName = "Start"
     const provider = new GoogleAuthProvider();
     const auth = getAuth();
+    const db = getFirestore();
 
     onAuthStateChanged(auth, newUser => newUser ? user = newUser : user = undefined);
 </script>
@@ -38,7 +40,7 @@
       <TopBar openDrawer={() => isDrawerOpened = true} signOut={() => signOut(auth)} {openedSection} />
     </AppContent>
 
-    <svelte:component this={SECTIONS[openedSection].component} bind:openedSection/>
+    <svelte:component this={SECTIONS[openedSection].component} bind:openedSection {db} {user}/>
 {:else}
     <Auth {provider} {auth} />
 {/if}

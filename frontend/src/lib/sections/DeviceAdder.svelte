@@ -8,23 +8,23 @@
     import slug from 'slug';
    
     export let open: boolean;
-    export let addDevice: (dev: Device) => boolean;
+    export let addDevice: (dev: Device) => Promise<boolean>;
     
     const defaultDevice: Device = {
         name: "",
         type: DeviceType.Accelerometer,
         description: "",
-        code: "",
+        id: "",
     }
 
     let isInvalid = false
     let step = 1
     let deviceToAdd: Device = { ...defaultDevice }
 
-    function next() {
+    async function next() {
         if(step === 1) {
-            deviceToAdd.code = slug(deviceToAdd.name)
-            if(deviceToAdd.name !== "" && addDevice(deviceToAdd)) {
+            deviceToAdd.id = slug(deviceToAdd.name)
+            if(deviceToAdd.name !== "" && await addDevice(deviceToAdd)) {
                 step = 2
             }
             else {
@@ -73,8 +73,8 @@
             >
             </Textfield>
         {:else if step === 2}
-            Paste this code on your device:             
-            <h1 style="margin-top: 20px;"><strong> {deviceToAdd.code} </strong></h1>
+            Paste this id on your device:             
+            <h1 style="margin-top: 20px;"><strong> {deviceToAdd.id} </strong></h1>
         {/if}
     </Content>
     <Actions>

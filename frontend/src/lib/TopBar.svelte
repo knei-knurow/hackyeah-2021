@@ -9,20 +9,9 @@
 
 <TopAppBar variant="static">
     <Row>
-      <Section>
-        <IconButton class="material-icons" on:click={openDrawer}>menu</IconButton>
-        <Title> {openedSection} </Title>
-      </Section>
-      <Section align="end" toolbar>
-        <IconButton class="material-icons" aria-label="Download">
-          file_download
-        </IconButton>
-        <IconButton class="material-icons" aria-label="Print this page">
-          print
-        </IconButton>
-        <IconButton class="material-icons" aria-label="Bookmark this page">
-          bookmark
-        </IconButton>
-      </Section>
+        <Section>
+            <IconButton class="material-icons" on:click={openDrawer}>menu</IconButton>
+            <Title> {openedSection} </Title>
+        </Section>
     </Row>
-  </TopAppBar>
+</TopAppBar>

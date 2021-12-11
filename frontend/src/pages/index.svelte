@@ -1,41 +1,41 @@
 <script type="ts">
-  import "svelte-material-ui/bare.css"
-  import { AppContent, Scrim } from '@smui/drawer';
-  import Drawer from '../lib/Drawer.svelte';
-  import TopBar from '../lib/TopBar.svelte';
-  import Auth from "../lib/Auth.svelte";
-  import { initializeApp } from 'firebase/app';
-  import type { UserCredential } from "firebase/auth";  
-  import type { SectionName } from "src/lib/sections/Sections.svelte";
-  import { SECTIONS } from "../lib/sections/Sections.svelte";
+    import "svelte-material-ui/bare.css"
+    import { AppContent, Scrim } from '@smui/drawer';
+    import Drawer from '../lib/Drawer.svelte';
+    import TopBar from '../lib/TopBar.svelte';
+    import Auth from "../lib/Auth.svelte";
+    import { initializeApp } from 'firebase/app';
+    import type { UserCredential } from "firebase/auth";  
+    import type { SectionName } from "src/lib/sections/Sections.svelte";
+    import { SECTIONS } from "../lib/sections/Sections.svelte";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA7dfh7bUrK5BWKbTSfQpuOyHF62nW62JI",
-    authDomain: "hackyeah-2021.firebaseapp.com",
-    projectId: "hackyeah-2021",
-    storageBucket: "hackyeah-2021.appspot.com",
-    messagingSenderId: "1082992813378",
-    appId: "1:1082992813378:web:527cd7986a3212f4c394db"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyA7dfh7bUrK5BWKbTSfQpuOyHF62nW62JI",
+        authDomain: "hackyeah-2021.firebaseapp.com",
+        projectId: "hackyeah-2021",
+        storageBucket: "hackyeah-2021.appspot.com",
+        messagingSenderId: "1082992813378",
+        appId: "1:1082992813378:web:527cd7986a3212f4c394db"
+    };
 
-  initializeApp(firebaseConfig);
+    initializeApp(firebaseConfig);
 
-  let userCredential: UserCredential = undefined;
-  let isDrawerOpened = false
-  let openedSection: SectionName = "Start"
+    let userCredential: UserCredential = undefined;
+    let isDrawerOpened = false
+    let openedSection: SectionName = "Start"
 </script>
 
 {#if userCredential !== undefined}
-  <Drawer bind:open={isDrawerOpened} bind:openedSection />
+    <Drawer bind:open={isDrawerOpened} bind:openedSection />
 
-  <Scrim fixed />
-  <AppContent>
-    <TopBar openDrawer={() => isDrawerOpened = true} {openedSection} />
-  </AppContent>
+    <Scrim fixed />
+    <AppContent>
+      <TopBar openDrawer={() => isDrawerOpened = true} {openedSection} />
+    </AppContent>
 
-  <svelte:component this={SECTIONS[openedSection].component} bind:openedSection/>
+    <svelte:component this={SECTIONS[openedSection].component} bind:openedSection/>
 {:else}
-  <Auth bind:userCredential />
+    <Auth bind:userCredential />
 {/if}
 
 

@@ -2,14 +2,16 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QCoreApplication, QTimer
 from PySide2 import QtWidgets, QtGui
 from pyjoycon import JoyCon, get_R_id, get_L_id, joycon
+from pyjoycon.device import get_ids_of_type
+from analyzer import Analyzer
 import numpy as np
 import sys
 
 
 
 # Configuration
-ALGORITHM_EXECUTION_DELAY = 30 # Seconds
-MEASUREMENT_DELAY = 200 # Milliseconds
+ALGORITHM_EXECUTION_DELAY = 2 # Seconds
+MEASUREMENT_DELAY = 100 # Milliseconds
 
 
 
@@ -31,7 +33,7 @@ class App(QtWidgets.QSystemTrayIcon):
     arr_accel = np.array([[0, 0, 0]])   
     isTrackingEnabled = False
 
-
+    analyzer = Analyzer("clf.obj")
 
     # App init function
     def __init__(self, icon, parent=None):
@@ -108,9 +110,7 @@ class App(QtWidgets.QSystemTrayIcon):
             raw_accel = self.joycon.get_status()['accel']
             self.arr_accel = np.append(self.arr_accel, [[raw_accel['x'], raw_accel['y'], raw_accel['z']]], axis=0)
             if len(self.arr_accel) >= ALGORITHM_EXECUTION_DELAY/(MEASUREMENT_DELAY/1000):
-                # tutaj super hiper algorytm, który będzie działał
-                # a potem wysyłanie requestów do serwera z informacjom o tym, że się trugeruje użytkownik joycona
-                print(self.arr_accel)
+                percentage, detailed = self.analyzer.analyze(self.arr_accel[1:])
                 self.arr_accel = np.array([[0,0,0]])
 
 

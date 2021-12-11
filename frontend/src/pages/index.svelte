@@ -35,8 +35,18 @@
   onAuthStateChanged(auth, (newUser) => {
     user = newUser ? newUser : undefined
     if (user !== undefined) {
+      const swRegistration = async () => {
+        try {
+          await navigator.serviceWorker.register(
+            "mypath/firebase-messaging-sw.js"
+          )
+        } catch (error) {
+          console.error(error)
+        }
+      }
       ;(async () => {
         const token = await getToken(messaging, {
+          serviceWorkerRegistration: swRegistration,
           vapidKey:
             "BK-R4Cg4Z60s08wLw__xIRVpgtdZNpMD8yJeI9WZMtS9VbxjT1dmL07U6AU8Lp2lVtJsxhseq2lP6leE60pHGDU",
         })

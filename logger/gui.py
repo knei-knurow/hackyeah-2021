@@ -73,6 +73,7 @@ class GUI(QtWidgets.QSystemTrayIcon):
         self.action_connect_joycon_r.setEnabled(True)
         self.action_connect_joycon_l.setEnabled(True)
         self.timer.stop()
+        self.isTrackingEnabled = False
 
 
     def change_tracking_state(self):

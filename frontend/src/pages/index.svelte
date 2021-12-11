@@ -5,7 +5,9 @@
   import TopBar from '../lib/TopBar.svelte';
   import Auth from "../lib/Auth.svelte";
   import { initializeApp } from 'firebase/app';
-  import type { UserCredential } from "firebase/auth";
+  import type { UserCredential } from "firebase/auth";  
+  import type { SectionName } from "src/lib/sections/Sections.svelte";
+  import { SECTIONS } from "../lib/sections/Sections.svelte";
 
   const firebaseConfig = {
     apiKey: "AIzaSyA7dfh7bUrK5BWKbTSfQpuOyHF62nW62JI",
@@ -20,15 +22,18 @@
 
   let userCredential: UserCredential = undefined;
   let isDrawerOpened = false
+  let openedSection: SectionName = "Start"
 </script>
 
 {#if userCredential !== undefined}
-  <Drawer bind:open={isDrawerOpened} />
+  <Drawer bind:open={isDrawerOpened} bind:openedSection />
 
   <Scrim fixed />
   <AppContent>
-    <TopBar openDrawer={() => isDrawerOpened = true} />
-  </AppContent>  
+    <TopBar openDrawer={() => isDrawerOpened = true} {openedSection} />
+  </AppContent>
+
+  <svelte:component this={SECTIONS[openedSection].component} bind:openedSection/>
 {:else}
   <Auth bind:userCredential />
 {/if}

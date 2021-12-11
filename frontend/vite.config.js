@@ -53,7 +53,7 @@ if (reload) {
 }
 
 export default defineConfig({
-  // base: process.env.BASE_URL || 'https://github.com/',
+  base: '/hackyeah-2021/',
   build: {
     sourcemap: process.env.SOURCE_MAP === 'true',
   },

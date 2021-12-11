@@ -10,6 +10,8 @@
   import type { SectionName } from "src/lib/sections/Sections.svelte"
   import { SECTIONS } from "../lib/sections/Sections.svelte"
   import { getFirestore } from "firebase/firestore"
+  import { getMessaging, getToken, onMessage } from "firebase/messaging"
+  import { doc, setDoc } from "firebase/firestore"
 
   const firebaseConfig = {
     apiKey: "AIzaSyA7dfh7bUrK5BWKbTSfQpuOyHF62nW62JI",
@@ -28,10 +30,33 @@
   const provider = new GoogleAuthProvider()
   const auth = getAuth()
   const db = getFirestore()
+  const messaging = getMessaging()
 
-  onAuthStateChanged(auth, (newUser) =>
-    newUser ? (user = newUser) : (user = undefined)
-  )
+  onAuthStateChanged(auth, (newUser) => {
+    user = newUser ? newUser : undefined
+    if (user !== undefined) {
+      ;(async () => {
+        const token = await getToken(messaging, {
+          vapidKey:
+            "BK-R4Cg4Z60s08wLw__xIRVpgtdZNpMD8yJeI9WZMtS9VbxjT1dmL07U6AU8Lp2lVtJsxhseq2lP6leE60pHGDU",
+        })
+        if (token) {
+          console.log(token)
+          await setDoc(doc(db, "users", newUser.uid, "fcmTokens", token), {
+            token,
+          })
+        } else {
+          console.log(
+            "No registration token available. Request permission to generate one."
+          )
+        }
+      })()
+    }
+  })
+
+  onMessage(messaging, (payload) => {
+    console.log("Message received. ", payload)
+  })
 </script>
 
 {#if user !== undefined}

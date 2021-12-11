@@ -5,7 +5,7 @@ import replace from '@rollup/plugin-replace'
 
 const pwaOptions = {
   // mode: 'development',
-  // base: '/hackyeah-2021/',
+  base: '/hackyeah-2021/',
   includeAssets: ['favicon.svg'],
   manifest: {
     name: 'PWA Router',
@@ -53,7 +53,7 @@ if (reload) {
 }
 
 export default defineConfig({
-  // base: '/hackyeah-2021/',
+  base: '/hackyeah-2021/',
   build: {
     sourcemap: process.env.SOURCE_MAP === 'true',
   },

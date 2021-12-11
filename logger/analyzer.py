@@ -111,9 +111,7 @@ class Analyzer:
                 for i in range(0, len(emotion_labels)):
                     mood_item = []
                     emotion_label = emotion_labels[i]
-                    emotion_prediction = (
-                        100 * emotion_predictions[i] / sum_of_predictions
-                    )
+                    emotion_prediction = emotion_predictions[i] / sum_of_predictions
                     mood_item.append(emotion_label)
                     mood_item.append(emotion_prediction)
                     mood_items.append(mood_item)

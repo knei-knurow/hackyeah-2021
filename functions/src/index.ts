@@ -39,12 +39,11 @@ export const webhook = functions.https.onRequest(async (request, response) => {
     fcmTokens.push(token)
   }
   } catch (error) {   
-    functions.logger.info(error)
+    functions.logger.info(`error: ${error}`)
   }
 
   // Get all fcmTokens of a particular user, so that they are notified on all
   // devices
-  
   
 
   functions.logger.info(fcmTokens)

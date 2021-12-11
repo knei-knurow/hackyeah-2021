@@ -5,7 +5,7 @@ import replace from '@rollup/plugin-replace'
 
 const pwaOptions = {
   mode: 'development',
-  base: '/',
+  base: '/hackyeah-2021/',
   includeAssets: ['favicon.svg'],
   manifest: {
     name: 'PWA Router',

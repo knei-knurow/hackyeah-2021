@@ -6,19 +6,13 @@ import numpy as np
 from gui import GUI
 import sys
 
-# Configuration
-RAGE_DETECTION_DELAY = 30 # Seconds
-ACCEL_SAMPLE_DELAY = 0.01 # Seconds
-
-
 
 # Connect to JoyCon
 joycon_id = None
 joycon = None
 
 # Create arrays for data
-arr_accel = np.array([[0,0,0]])
-
+arr_accel = np.array([[0, 0, 0]])
 
 
 # Connect to joycon
@@ -29,8 +23,7 @@ def joycon_connect(self):
         print(joycon.get_status())
         self.tray_btn_1.setEnabled(False)
     else:
-        print("Cant connect to JoyCon (R)")
-
+        print('Cant connect to JoyCon (R)')
 
 
 # Create system tray icon

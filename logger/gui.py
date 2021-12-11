@@ -2,6 +2,8 @@ from PyQt5.QtCore import QCoreApplication, QTimer
 from PySide2 import QtWidgets, QtGui
 import sys
 from pyjoycon import JoyCon, get_R_id, get_L_id, joycon
+from win10toast import ToastNotifier
+
 
 class GUI(QtWidgets.QSystemTrayIcon):
     # Joycon
@@ -15,28 +17,29 @@ class GUI(QtWidgets.QSystemTrayIcon):
 
     # Timer
     timer = QTimer()
-    timer.setInterval(100)
+    timer.setInterval(200)
 
     # Variables
     isTrackingEnabled = False
+
+    # Toast
+    toaster = ToastNotifier()
 
     def __init__(self, icon, parent=None):
         QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
         self.setToolTip(f'Your child rage tracker')
         menu = QtWidgets.QMenu(parent)
 
-
-        menu.addSection("Tracking")
+        menu.addSection('Tracking')
         self.action_tracking_status = menu.addAction('Status: paused')
         self.action_connect_parent_device = menu.addAction('Connect to parent device')
-        menu.addSection("Input devices")
-        self.action_connection_status = menu.addAction("Disconnect")
+        menu.addSection('Input devices')
+        self.action_connection_status = menu.addAction('Disconnect')
         self.action_connection_status.setEnabled(False)
-        self.action_connect_joycon_r = menu.addAction("Connect to JoyCon (R)")
-        self.action_connect_joycon_l = menu.addAction("Connect to JoyCon (L)")
+        self.action_connect_joycon_r = menu.addAction('Connect to JoyCon (R)')
+        self.action_connect_joycon_l = menu.addAction('Connect to JoyCon (L)')
         menu.addSeparator()
         action_quit = menu.addAction("Quit")
-
 
         self.action_tracking_status.triggered.connect(self.change_tracking_state)
         self.action_connection_status.triggered.connect(self.disconnect_devices)
@@ -44,7 +47,6 @@ class GUI(QtWidgets.QSystemTrayIcon):
         self.action_connect_joycon_l.triggered.connect(self.connect_joycon_l)
         action_quit.triggered.connect(QCoreApplication.instance().quit)
         self.setContextMenu(menu)
-
 
     def connect_joycon_r(self):
         self.joycon_id = get_R_id()
@@ -67,7 +69,7 @@ class GUI(QtWidgets.QSystemTrayIcon):
             self.timer.start()
 
     def disconnect_devices(self):
-        self.joycon_id = None            
+        self.joycon_id = None
         self.joycon = None
         self.action_connection_status.setEnabled(False)
         self.action_connect_joycon_r.setEnabled(True)
@@ -75,12 +77,10 @@ class GUI(QtWidgets.QSystemTrayIcon):
         self.timer.stop()
         self.isTrackingEnabled = False
 
-
     def change_tracking_state(self):
         self.isTrackingEnabled = not self.isTrackingEnabled
         self.action_tracking_status.setText(f'Status: {"active" if self.isTrackingEnabled else "paused"}')
 
-
     def main(self):
         if self.isTrackingEnabled:
-            print(self.joycon.get_status()['accel'])
+            raw = self.joycon.get_status()['accel']

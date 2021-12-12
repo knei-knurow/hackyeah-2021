@@ -8,9 +8,10 @@ const pwaOptions = {
   base: '/hackyeah-2021/',
   includeAssets: ['favicon.svg'],
   manifest: {
-    name: 'PWA Router',
-    short_name: 'PWA Router',
+    name: 'Moodly',
+    short_name: 'Moodly',
     theme_color: '#6200ee',
+    background_color: "#6200ee",
     icons: [
       {
         src: 'pwa-192x192.png', // <== don't add slash, for testing

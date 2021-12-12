@@ -9,7 +9,7 @@
 
 <Drawer variant="modal" fixed={false} bind:open>
   <Header>
-    <Title>Ragequit detector</Title>
+    <Title>Moodly</Title>
     <Subtitle>An app for detecting ragequits.</Subtitle>
   </Header>
   <Content>

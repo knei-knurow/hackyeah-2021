@@ -3,12 +3,13 @@ from PyQt5.QtCore import QCoreApplication, QTimer, QDir
 from PySide2 import QtWidgets, QtGui
 from pyjoycon import JoyCon, get_R_id, get_L_id, joycon
 from pyjoycon.device import get_ids_of_type
+import requests
 from analyzer import Analyzer
 import numpy as np
 import sys
 import tkinter as tk
 from tkinter import simpledialog
-
+import json
 
 
 
@@ -34,7 +35,8 @@ class App(QtWidgets.QSystemTrayIcon):
     # Variables
     arr_accel = np.array([[0, 0, 0]])   
     isTrackingEnabled = False
-    device_code = None
+    deviceId = None
+    userUid = None
 
     #Tk
     ROOT = tk.Tk()
@@ -118,8 +120,11 @@ class App(QtWidgets.QSystemTrayIcon):
         self.action_tracking_status.setText(f'Status: {"active" if self.isTrackingEnabled else "paused"}')
 
     def parent_connection_dialog(self):
-        USER_INP = simpledialog.askstring(title="Enter device code", prompt="")
-        self.device_code = USER_INP
+        USER_INP = simpledialog.askstring(title="Enter user id", prompt="")
+        self.userUid = USER_INP.split('-')[0]
+        self.deviceId= USER_INP.split('-')[1]
+        print(self.userUid)
+        print(self.deviceId)
         if not (USER_INP == None or len(USER_INP)==0):
             self.action_connect_parent_device.setVisible(False)
             self.action_tracking_status.setVisible(True)
@@ -131,8 +136,18 @@ class App(QtWidgets.QSystemTrayIcon):
             raw_accel = self.joycon.get_status()['accel']
             self.arr_accel = np.append(self.arr_accel, [[raw_accel['x'], raw_accel['y'], raw_accel['z']]], axis=0)
             if len(self.arr_accel) >= ALGORITHM_EXECUTION_DELAY/(MEASUREMENT_DELAY/1000):
+                
                 percentage, detailed = self.analyzer.analyze(self.arr_accel[1:])
-                # Tutaj można wysyłać requesty
+                if percentage >= 0.1:
+                    r = requests.post(
+                        'https://us-central1-hackyeah-2021.cloudfunctions.net/webhook', 
+                        data={
+                            'userUid': self.userUid,
+                            'deviceId': self.deviceId
+                        }
+                    )
+                    print(r.text)
+
                 self.arr_accel = np.array([[0,0,0]])
 
 

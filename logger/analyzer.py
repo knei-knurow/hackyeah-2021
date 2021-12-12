@@ -1,12 +1,12 @@
 import numpy as np
 import pickle
+import cv2 as cv
 from deepface import DeepFace
 from deepface.detectors import FaceDetector
 from deepface.commons import functions, realtime, distance as dst
 from numpy.lib.function_base import average
 from scipy import stats
 from sklearn.linear_model import SGDClassifier as SGD
-import cv2 as cv
 import pandas as pd
 
 ### USAGE :

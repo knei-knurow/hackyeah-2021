@@ -3,14 +3,13 @@ from PyQt5.QtCore import QCoreApplication, QTimer, QDir
 from PySide2 import QtWidgets, QtGui
 from pyjoycon import JoyCon, get_R_id, get_L_id, joycon
 from pyjoycon.device import get_ids_of_type
+from analyzer_optfaces import Analyzer
 import requests
-from analyzer import Analyzer
 import numpy as np
 import sys
 import tkinter as tk
 from tkinter import simpledialog
 import json
-
 
 
 # Configuration
@@ -66,7 +65,7 @@ class App(QtWidgets.QSystemTrayIcon):
         self.action_tracking_status.setVisible(False)
         self.action_connection_status.setVisible(False)
         self.action_tracking_status.setEnabled(False)
-
+    
         # Connecting trigers to functions
         self.action_tracking_status.triggered.connect(self.change_tracking_state)
         self.action_connection_status.triggered.connect(self.disconnect_devices)
@@ -111,8 +110,6 @@ class App(QtWidgets.QSystemTrayIcon):
         self.action_tracking_status.setText("Status: paused")
         self.timer.stop()
         self.isTrackingEnabled = False
-
-
 
     # Updating GUI
     def change_tracking_state(self):
